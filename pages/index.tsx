@@ -1,62 +1,58 @@
-import Head from 'next/head'
+import Head from 'next/head';
+import Layout, {siteTitle} from '../components/layout';
+import utilStyles from '../styles/utils.module.css';
 import Link from "next/link";
-import Image from "next/image";
+import Alert from "../components/alert";
+import { getSortedPostsData } from '../lib/posts';
 
-export default function Home() {
+type PostType = {
+  id: string,
+  date: string,
+  title: string,
+}
+
+export default function Home({allPostsData}: {allPostsData: PostType[]}) {
   return (
-    <div className="container">
+    <Layout home>
       <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
+        <title>{siteTitle}</title>
       </Head>
+      <section className={utilStyles.headingMd}>
+        <p><b>about me</b>
+          Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aut cumque delectus ea earum eos impedit in magni
+          minus modi, nemo nesciunt odio quasi quisquam similique sint, soluta unde voluptates voluptatibus!
+        </p>
+        <p>
+          (This is a sample website - you’ll be building a site like this on{' '}
+          <a href="https://nextjs.org/learn">our Next.js tutorial</a>.)
+        </p>
+        <Link href="/posts/first-post">to post!</Link>
+        <Alert type="error">Error</Alert>
+        <Alert type="success">Success</Alert>
+      </section>
+      <section className={`${utilStyles.headingMd} ${utilStyles.padding1px}`}>
+        <h2 className={utilStyles.headingLg}>Blog</h2>
+        <ul className={utilStyles.list}>
+          {allPostsData.map(({ id, date, title }) => (
+            <li className={utilStyles.listItem} key={id}>
+              {title}
+              <br />
+              {id}
+              <br />
+              {date}
+            </li>
+          ))}
+        </ul>
+      </section>
+    </Layout>
+  );
+}
 
-      <main>
-        <Image src="/img/my-photo-1.jpeg"
-               width={160}
-               height={200}
-               layout="fixed"
-               alt="123123"
-        />
-        <Link href="/posts/first-post">to first post page</Link>
-      </main>
-
-      <footer>
-      </footer>
-
-      <style jsx>{`
-        .container {
-          min-height: 100vh;
-          padding: 0 0.5rem;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
-
-        main {
-          padding: 5rem 0;
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
-      `}</style>
-
-      <style jsx global>{`
-        html,
-        body {
-          padding: 0;
-          margin: 0;
-          font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
-            Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue,
-            sans-serif;
-        }
-
-        * {
-          box-sizing: border-box;
-        }
-      `}</style>
-    </div>
-  )
+export async function getStaticProps() {
+  const allPostsData = getSortedPostsData();
+  return {
+    props: {
+      allPostsData,
+    },
+  };
 }
